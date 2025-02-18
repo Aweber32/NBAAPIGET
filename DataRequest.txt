@@ -1,0 +1,325 @@
+from nba_api.stats.endpoints import ScoreboardV2
+from nba_api.live.nba.endpoints import boxscore
+from datetime import datetime, timedelta
+import json
+
+# Get yesterday's date in NBA API format (MM/DD/YYYY)
+yesterday = (datetime.now() - timedelta(days=1)).strftime('%m/%d/%Y')
+
+# Query scoreboard for yesterday's games
+board = ScoreboardV2(game_date=yesterday)
+
+# Get game data
+games = board.get_dict()['resultSets'][0]['rowSet']
+
+
+# Loop through games and print details
+#for game in games:
+    #gameId = game[2]
+
+box = boxscore.BoxScore('0022400633')
+pretty_json = json.dumps(box.game.get_dict(), indent=4)
+
+#print(pretty_json)
+
+data = json.loads(pretty_json)
+
+def find_all_fields(data, field_name, results=None):
+    if results is None:
+        results = []
+
+    if isinstance(data, dict):
+        for key, value in data.items():
+            if key == field_name:
+                results.append(value)
+            if isinstance(value, (dict, list)):
+                find_all_fields(value, field_name, results)
+    elif isinstance(data, list):
+        for item in data:
+            find_all_fields(item, field_name, results)
+
+    return results
+
+#GAME Table
+game_id = find_all_fields(data, "gameId")
+gametime_local = find_all_fields(data, "gameTimeLocal")
+gametime_utc = find_all_fields(data, "gameTimeUTC")
+gametime_home = find_all_fields(data, "gameTimeHome")
+gametime_away = find_all_fields(data, "gameTimeAway")
+game_et = find_all_fields(data, "gameEt")
+duration = find_all_fields(data, "duration")
+game_code = find_all_fields(data, "gameCode")
+game_status_text = find_all_fields(data, "gameStatusText")
+game_status = find_all_fields(data, "gameStatus")
+regulation_periods = find_all_fields(data, "regulationPeriods")
+period = find_all_fields(data, "period")
+game_clock = find_all_fields(data, "gameClock")
+attendance = find_all_fields(data, "attendance")
+sellout = find_all_fields(data, "sellout")
+arena_id = find_all_fields(data, "arenaId")
+lead_changes = find_all_fields(data, "leadChanges")
+times_tied = find_all_fields(data, "timesTied")
+
+#Arena Table
+arena = find_all_fields(data, "arena")
+for i in arena:
+    arena_id = i["arenaId"]
+    arena_name = i["arenaName"]
+    arena_city = i["arenaCity"]
+    arena_state = i["arenaState"]
+    arena_country = i["arenaCountry"]
+    arena_tz = i["arenaTimezone"]
+
+#Officials Table
+officials = find_all_fields(data, "officials")
+for i in officials:
+    official_Id = i["personId"]
+    #Add Game ID to post request
+    official_name = i["name"]
+    official_namei = i["nameI"]
+    official_firstname = i["firstName"]
+    official_familyname = i["familyName"]
+    jersery_num = i["jerseryNum"]
+    assignment = i["assignment"]
+
+#Team Table
+#Home team
+hometeam = find_all_fields(data, "homeTeam")
+hometeam_id = hometeam["teamID"]
+#Add Game ID to post request
+hometeam_name = hometeam["teamName"]
+hometeam_city = hometeam["teamCity"]
+hometeam_tricode = hometeam["teamTricode"]
+hometeam_score = hometeam["score"]
+hometeam_bonue = hometeam["inBonus"]
+hometeam_toremaining = hometeam["timeoutsRemaining"]
+stats_home = hometeam["statistics"]
+hometeam_assiststoratio = stats_home["assistsTurnoverRatio"] 
+hometeam_benchpoints = stats_home["benchPoints"]
+hometeam_biggestlead = stats_home["biggestLead"]
+hometeam_biggestleadscore = stats_home["biggestLeadScore"]
+hometeam_biggestscoringrun = stats_home["biggestScoringRun"]
+hometeam_biggestscoringrunscore = stats_home["biggestScoringRunScore"]
+hometeam_blocks = stats_home["blocks"]
+hometeam_blocksreceived = stats_home["blocksReceived"]
+hometeam_fastbreakpointsattempted = stats_home["fastBreakPointsAttempted"]
+hometeam_fastbreakpointsmade = stats_home["fastBreakPointsMade"]
+hometeam_fastbreakpointspercentage = stats_home["fastBreakPointsPercentage"]
+hometeam_fieldgoalsattempted = stats_home["fieldGoalsAttempted"]
+hometeam_fieldgoalseffectiveadjusted = stats_home["fieldGoalsEffectiveAdjusted"]
+hometeam_fieldgoalsmade = stats_home["fieldGoalsMade"]
+hometeam_fieldgoalspercentage = stats_home["fieldGoalsPercentage"]
+hometeam_foulsoffensive = stats_home["foulsOffensive"]
+hometeam_foulsdrawn = stats_home["foulsDrawn"]
+hometeam_foulspersonal = stats_home["foulsPersonal"]
+hometeam_foulsteam = stats_home["foulsTeam"]
+hometeam_foulstechnical = stats_home["foulsTechnical"]
+hometeam_foulsteamtechnical = stats_home["foulsTeamTechnical"]
+hometeam_freethrowsattempted = stats_home["freeThrowsAttempted"]
+hometeam_freethrowsmade = stats_home["freeThrowsMade"]
+hometeam_freethrowspercentage = stats_home["freeThrowsPercentage"]
+hometeam_leadchanges = stats_home["leadChanges"]
+hometeam_minutes = stats_home["minutes"]
+hometeam_minutescalculated = stats_home["minutesCalculated"]
+hometeam_points = stats_home["points"]
+hometeam_pointsagainst = stats_home["pointsAgainst"]
+hometeam_pointsfastbreak = stats_home["pointsFastBreak"]
+hometeam_pointsfromturnovers = stats_home["pointsFromTurnovers"]
+hometeam_pointsinthepaint = stats_home["pointsInThePaint"]
+hometeam_pointsinthepaintattempted = stats_home["pointsInThePaintAttempted"]
+hometeam_pointsinthepaintmade = stats_home["pointsInThePaintMade"]
+hometeam_pointsinthepaintpercentage = stats_home["pointsInThePaintPercentage"]
+hometeam_pointssecondchance = stats_home["pointsSecondChance"]
+hometeam_reboundsdefensive = stats_home["reboundsDefensive"]
+hometeam_reboundsoffensive = stats_home["reboundsOffensive"]
+hometeam_reboundspersonal = stats_home["reboundsPersonal"]
+hometeam_reboundsteam = stats_home["reboundsTeam"]
+hometeam_reboundsteamdefensive = stats_home["reboundsTeamDefensive"]
+hometeam_reboundsteamoffensive = stats_home["reboundsTeamOffensive"]
+hometeam_reboundstotal = stats_home["reboundsTotal"]
+hometeam_secondchancepointsattempted = stats_home["secondChancePointsAttempted"]
+hometeam_secondchancepointsmade = stats_home["secondChancePointsMade"]
+hometeam_secondchancepointspercentage = stats_home["secondChancePointsPercentage"]
+hometeam_steals = stats_home["steals"]
+hometeam_threepointersattempted = stats_home["threePointersAttempted"]
+hometeam_threepointersmade = stats_home["threePointersMade"]
+hometeam_threepointerspercentage = stats_home["threePointersPercentage"]
+hometeam_timeleading = stats_home["timeLeading"]
+hometeam_timestied = stats_home["timesTied"]
+hometeam_trueshootingattempts = stats_home["trueShootingAttempts"]
+hometeam_trueshootingpercentage = stats_home["trueShootingPercentage"]
+hometeam_turnovers = stats_home["turnovers"]
+hometeam_turnoversteam = stats_home["turnoversTeam"]
+hometeam_turnoverstotal = stats_home["turnoversTotal"]
+hometeam_twopointersattempted = stats_home["twoPointersAttempted"]
+hometeam_twopointersmade = stats_home["twoPointersMade"]
+hometeam_twopointerspercentage = stats_home["twoPointersPercentage"]
+#Away Team 
+awayteam = find_all_fields(data, "awayTeam")
+awayteam_id = awayteam["teamID"]
+# Add Game ID to post request
+awayteam_name = awayteam["teamName"]
+awayteam_city = awayteam["teamCity"]
+awayteam_tricode = awayteam["teamTricode"]
+awayteam_score = awayteam["score"]
+awayteam_bonus = awayteam["inBonus"]
+awayteam_toremaining = awayteam["timeoutsRemaining"]
+stats_away = awayteam["statistics"]
+awayteam_assiststoratio = stats_away["assistsTurnoverRatio"]
+awayteam_benchpoints = stats_away["benchPoints"]
+awayteam_biggestlead = stats_away["biggestLead"]
+awayteam_biggestleadscore = stats_away["biggestLeadScore"]
+awayteam_biggestscoringrun = stats_away["biggestScoringRun"]
+awayteam_biggestscoringrunscore = stats_away["biggestScoringRunScore"]
+awayteam_blocks = stats_away["blocks"]
+awayteam_blocksreceived = stats_away["blocksReceived"]
+awayteam_fastbreakpointsattempted = stats_away["fastBreakPointsAttempted"]
+awayteam_fastbreakpointsmade = stats_away["fastBreakPointsMade"]
+awayteam_fastbreakpointspercentage = stats_away["fastBreakPointsPercentage"]
+awayteam_fieldgoalsattempted = stats_away["fieldGoalsAttempted"]
+awayteam_fieldgoalseffectiveadjusted = stats_away["fieldGoalsEffectiveAdjusted"]
+awayteam_fieldgoalsmade = stats_away["fieldGoalsMade"]
+awayteam_fieldgoalspercentage = stats_away["fieldGoalsPercentage"]
+awayteam_foulsoffensive = stats_away["foulsOffensive"]
+awayteam_foulsdrawn = stats_away["foulsDrawn"]
+awayteam_foulspersonal = stats_away["foulsPersonal"]
+awayteam_foulsteam = stats_away["foulsTeam"]
+awayteam_foulstechnical = stats_away["foulsTechnical"]
+awayteam_foulsteamtechnical = stats_away["foulsTeamTechnical"]
+awayteam_freethrowsattempted = stats_away["freeThrowsAttempted"]
+awayteam_freethrowsmade = stats_away["freeThrowsMade"]
+awayteam_freethrowspercentage = stats_away["freeThrowsPercentage"]
+awayteam_leadchanges = stats_away["leadChanges"]
+awayteam_minutes = stats_away["minutes"]
+awayteam_minutescalculated = stats_away["minutesCalculated"]
+awayteam_points = stats_away["points"]
+awayteam_pointsagainst = stats_away["pointsAgainst"]
+awayteam_pointsfastbreak = stats_away["pointsFastBreak"]
+awayteam_pointsfromturnovers = stats_away["pointsFromTurnovers"]
+awayteam_pointsinthepaint = stats_away["pointsInThePaint"]
+awayteam_pointsinthepaintattempted = stats_away["pointsInThePaintAttempted"]
+awayteam_pointsinthepaintmade = stats_away["pointsInThePaintMade"]
+awayteam_pointsinthepaintpercentage = stats_away["pointsInThePaintPercentage"]
+awayteam_pointssecondchance = stats_away["pointsSecondChance"]
+awayteam_reboundsdefensive = stats_away["reboundsDefensive"]
+awayteam_reboundsoffensive = stats_away["reboundsOffensive"]
+awayteam_reboundspersonal = stats_away["reboundsPersonal"]
+awayteam_reboundsteam = stats_away["reboundsTeam"]
+awayteam_reboundsteamdefensive = stats_away["reboundsTeamDefensive"]
+awayteam_reboundsteamoffensive = stats_away["reboundsTeamOffensive"]
+awayteam_reboundstotal = stats_away["reboundsTotal"]
+awayteam_secondchancepointsattempted = stats_away["secondChancePointsAttempted"]
+awayteam_secondchancepointsmade = stats_away["secondChancePointsMade"]
+awayteam_secondchancepointspercentage = stats_away["secondChancePointsPercentage"]
+awayteam_steals = stats_away["steals"]
+awayteam_threepointersattempted = stats_away["threePointersAttempted"]
+awayteam_threepointersmade = stats_away["threePointersMade"]
+awayteam_threepointerspercentage = stats_away["threePointersPercentage"]
+awayteam_timeleading = stats_away["timeLeading"]
+awayteam_timestied = stats_away["timesTied"]
+awayteam_trueshootingattempts = stats_away["trueShootingAttempts"]
+awayteam_trueshootingpercentage = stats_away["trueShootingPercentage"]
+awayteam_turnovers = stats_away["turnovers"]
+awayteam_turnoversteam = stats_away["turnoversTeam"]
+awayteam_turnoverstotal = stats_away["turnoversTotal"]
+awayteam_twopointersattempted = stats_away["twoPointersAttempted"]
+awayteam_twopointersmade = stats_away["twoPointersMade"]
+awayteam_twopointerspercentage = stats_away["twoPointersPercentage"]
+
+#Period Table
+#home team
+period_home = find_all_fields(data, "homeTeam")
+periods_home = period_home["periods"]
+for period in periods_home:
+    period_id = period["period"]
+    #get home team ID
+    #get game ID
+    period_type = period["periodType"]
+    period_score = period["score"] 
+#away team
+period_away = find_all_fields(data, "awayTeam")
+periods_away = period_away["periods"]
+for period in periods_away:
+    period_id = period["period"]
+    #get home team ID
+    #get game ID
+    period_type = period["periodType"]
+    period_score = period["score"]
+
+#Player and Stats Table
+#home team
+home_t = find_all_fields(data, "homeTeam")
+home_players = home_t["players"]
+for player in home_players:
+    player_id = player["personId"]
+    #get home team id
+    #get game id
+    player_name = player["name"]
+    player_namei = player["nameI"]
+    player_firstname = player["firstName"]
+    player_familyname = player["familyName"]
+    player_jerseynum = player["jerseyNum"]
+    player_pos = player["position"]
+    player_starter = player["starter"]   
+#away team
+away_t = find_all_fields(data, "awayTeam")
+away_players = away_t["players"]
+for player in away_players:
+    player_id = player["personId"]
+    #get home team id
+    #get game id
+    player_name = player["name"]
+    player_namei = player["nameI"]
+    player_firstname = player["firstName"]
+    player_familyname = player["familyName"]
+    player_jerseynum = player["jerseyNum"]
+    player_pos = player["position"]
+    player_starter = player["starter"]
+    #Statistics table
+    player_stats = player["statistics"]
+    #add player ID
+    #add game ID
+    player_oncourt = player["oncourt"]
+    player_played = player["played"]
+    if player["notPlayingReason"] == None:
+        player_notPlaying = "active"
+    else:
+        player_notPlaying = player["notPlayingDescription"]
+    if player["notPlayingDescription"] == None:
+        player_notPlayingdesc = ""
+    else:
+        player_notPlayingdesc = player["notPlayingDescription"]    
+    for stat in player_stats:
+        assists = stat["assists"]
+        blocks = stat["blocks"]
+        blocksRecieved = stat["blocksReceived"]
+        fieldGoalsAttempted = stat["fieldGoalsAttempted"]
+        fieldGoalsMade = stat["fieldGoalsMade"]
+        fieldGoalsPercentage = stat["fieldGoalsPercentage"]
+        foulsOffensive = stat["foulsOffensive"]
+        foulsDrawn = stat["foulsDrawn"]
+        foulsPersonal = stat["foulsPersonal"]
+        foulsTechnical = stat["foulsTechnical"]
+        freeThrowsAttempted = stat["freeThrowsAttempted"]
+        freeThrowsMade = stat["freeThrowsMade"]
+        freeThrowsPercentage = stat["freeThrowsPercentage"]
+        minus = stat["minus"]
+        minutes = stat["minutes"]
+        minutesCalculated = stat["minutesCalculated"]
+        plus = stat["plus"]
+        plusMinusPoints = stat["plusMinusPoints"]
+        points = stat["points"]
+        pointsFastBreak = stat["pointsFastBreak"]
+        pointsInThePaint = stat["pointsInThePaint"]
+        pointsSecondChance = stat["pointsSecondChance"]
+        reboundsDefensive = stat["reboundsDefensive"]
+        reboundsOffensive = stat["reboundsOffensive"]
+        reboundsTotal = stat["reboundsTotal"]
+        steals = stat["steals"]
+        threePointersAttempted = stat["threePointersAttempted"]
+        threePointersMade = stat["threePointersMade"]
+        threePointersPercentage = stat["threePointersPercentage"]
+        turnovers = stat["turnovers"]
+        twoPointersAttempted = stat["twoPointersAttempted"]
+        twoPointersMade = stat["twoPointersMade"]
+        twoPointersPercentage = stat["twoPointersPercentage"]
