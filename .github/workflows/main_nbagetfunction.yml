@@ -63,8 +63,12 @@ jobs:
         with:
           name: python-app
 
-      - name: Unzip artifact for deployment
-        run: unzip release.zip     
+      - name: Zip artifact for deployment
+        run: |
+          cd NBAGetFunction  # Go inside the function folder
+          zip -r ../release.zip .  # Zip everything inside NBAGetFunction
+          cd .. # Go back to the root folder
+     
         
       - name: Login to Azure
         uses: azure/login@v2
