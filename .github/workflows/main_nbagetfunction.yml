@@ -29,15 +29,22 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Create and start virtual environment
+            - name: Create and start virtual environment
+      - name: Create and start virtual environment  
         run: |
           python3 -m venv venv
           source venv/bin/activate
-      - name: Recreate requirements.txt to fix encoding issues
-        run: |
-          pip freeze > requirements.txt  # Regenerate in UTF-8
+          
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          source venv/bin/activate  # ✅ Ensure venv is activated
+          pip install -r requirements.txt  # ✅ Install dependencies
+
+      - name: Recreate requirements.txt to capture installed dependencies
+        run: |
+          source venv/bin/activate  # ✅ Ensure venv is activated
+          pip freeze > requirements.txt  # ✅ Now captures correct dependencies
+
 
       # Optional: Add step to run tests here
 
