@@ -1,12 +1,12 @@
 import logging
 import azure.functions as func
-from ArenaRequest import run as script1_run
-from BettingLinesRequest import run as script2_run
-from GameRequest import run as script3_run
-from OfficialsRequest import run as script4_run
-from PeriodRequest import run as script5_run
-from PlayerandStatsRequest import run as script6_run
-from TeamRequest import run as script7_run
+from .ArenaRequest import run as script1_run
+from .BettingLinesRequest import run as script2_run
+from .GameRequest import run as script3_run
+from .OfficialsRequest import run as script4_run
+from .PeriodRequest import run as script5_run
+from .PlayerandStatsRequest import run as script6_run
+from .TeamRequest import run as script7_run
 
 def main(myTimer: func.TimerRequest) -> None:
     logging.info("Azure Function started.")
