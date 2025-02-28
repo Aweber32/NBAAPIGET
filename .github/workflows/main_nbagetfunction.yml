@@ -43,6 +43,9 @@ jobs:
         run: |
           source venv/bin/activate  # ✅ Ensure venv is activated
           pip freeze > requirements.txt  # ✅ Now captures correct dependencies
+      - name: Install dependencies in Azure
+        run: |
+          az webapp ssh --resource-group Resource_Group1 --name NBAGetFunction --command "pip install -r /home/site/wwwroot/requirements.txt"
 
 
       # Optional: Add step to run tests here
