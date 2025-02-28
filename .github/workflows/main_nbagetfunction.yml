@@ -33,12 +33,12 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
+      - name: Recreate requirements.txt to fix encoding issues
+        run: |
+          rm -f requirements.txt  # Delete corrupted file
+          pip freeze > requirements.txt  # Regenerate in UTF-8
       - name: Install dependencies
         run: pip install -r requirements.txt
-      - name: Ensure correct encoding for requirements.txt
-        run: |
-          iconv -f utf-8 -t utf-8 requirements.txt -o requirements_fixed.txt
-          mv requirements_fixed.txt requirements.txt
 
       # Optional: Add step to run tests here
 
