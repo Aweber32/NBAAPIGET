@@ -35,6 +35,10 @@ jobs:
           source venv/bin/activate
       - name: Install dependencies
         run: pip install -r requirements.txt
+      - name: Ensure correct encoding for requirements.txt
+        run: |
+          iconv -f utf-8 -t utf-8 requirements.txt -o requirements_fixed.txt
+          mv requirements_fixed.txt requirements.txt
 
       # Optional: Add step to run tests here
 
