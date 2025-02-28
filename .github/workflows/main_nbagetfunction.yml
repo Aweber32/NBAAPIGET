@@ -31,8 +31,8 @@ jobs:
 
       - name: Create and start virtual environment
         run: |
-          py -m venv venv
-          source venv/scripts/activate
+          python3 -m venv venv
+          source venv/bin/activate
       - name: Recreate requirements.txt to fix encoding issues
         run: |
           rm -f requirements.txt  # Delete corrupted file
