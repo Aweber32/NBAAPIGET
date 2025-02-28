@@ -74,6 +74,6 @@ jobs:
       - name: Deploy to Azure Functions via ZipDeploy
         run: |
           az functionapp deployment source config-zip \
-            --resource-group <your-resource-group> \
+            --resource-group Resource_Group1 \
             --name ${{ env.FUNCTION_APP_NAME }} \
             --src release.zip
