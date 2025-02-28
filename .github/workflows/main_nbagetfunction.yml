@@ -11,14 +11,15 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '${{ github.workspace }}' # set this to the path to your web app project, defaults to the repository root
-  PYTHON_VERSION: '3.12' # set this to the python version to use (supports 3.6, 3.7, 3.8)
+  FUNCTION_APP_NAME: 'NBAGetFunction'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '${{ github.workspace }}/NBAGetFunction' # Ensure function app path is correct
+  PYTHON_VERSION: '3.12' # Azure Functions does not support Python 3.12 yet
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read # Required for actions/checkout
 
     steps:
       - name: Checkout repository
@@ -37,25 +38,25 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # Optional: Add step to run tests here
+      - name: Verify installed dependencies
+        run: pip check || true  # Ensures no broken dependencies
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: |
+          zip -r release.zip NBAGetFunction host.json requirements.txt -x "venv/*" ".git/*" ".github/*" "DataRequest.txt" "desktop.ini"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: |
-            release.zip
-            !venv/
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write # Required for JWT authentication
+      contents: read  # Required for actions/checkout
 
     steps:
       - name: Download artifact from build job
@@ -63,13 +64,6 @@ jobs:
         with:
           name: python-app
 
-      - name: Zip artifact for deployment
-        run: |
-          cd NBAGetFunction  # Go inside the function folder
-          zip -r ../release.zip .  # Zip everything inside NBAGetFunction
-          cd .. # Go back to the root folder
-     
-        
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -77,11 +71,9 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_06831B5FE2174653BD115F546E1A8A24 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A625E7F80C3C4C5E8FCE63C55A410DE8 }}
 
-      - name: 'Deploy to Azure Functions'
-        uses: Azure/functions-action@v1
-        id: deploy-to-function
-        with:
-          app-name: 'NBAGetFunction'
-          slot-name: 'Production'
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          
+      - name: Deploy to Azure Functions via ZipDeploy
+        run: |
+          az functionapp deployment source config-zip \
+            --resource-group <your-resource-group> \
+            --name ${{ env.FUNCTION_APP_NAME }} \
+            --src release.zip
