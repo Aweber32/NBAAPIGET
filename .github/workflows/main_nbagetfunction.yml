@@ -29,24 +29,22 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
             
-      - name: Create and start virtual environment  
+      - name: Create and start virtual environment
         run: |
           python3 -m venv venv
           source venv/bin/activate
-          
-      - name: Install dependencies
-        run: |
-          source venv/bin/activate  # ✅ Ensure venv is activated
-          pip install -r requirements.txt  # ✅ Install dependencies
 
-      - name: Recreate requirements.txt to capture installed dependencies
+      - name: Install dependencies locally
         run: |
-          source venv/bin/activate  # ✅ Ensure venv is activated
-          pip freeze > requirements.txt  # ✅ Now captures correct dependencies
-      - name: Install dependencies in Azure
-        run: |
-          az webapp ssh --resource-group Resource_Group1 --name NBAGetFunction --command "pip install -r /home/site/wwwroot/requirements.txt"
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          # Install dependencies into a folder to package them
+          pip install -r requirements.txt -t .python_packages/lib/site-packages
 
+      - name: Zip artifact for deployment
+        run: |
+          zip -r release.zip NBAGetFunction host.json requirements.txt .python_packages -x "venv/*" "*.git*" ".github/*"
 
       # Optional: Add step to run tests here
 
