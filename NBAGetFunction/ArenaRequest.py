@@ -4,31 +4,10 @@ from datetime import datetime, timedelta
 import json
 import requests
 import nba_api.stats.library.http as nba_http
+import time
 
 
 def run():
-    # Configure your Data Impulse proxy details
-    proxies = {
-        'http': "http://d3654d34ba507d40ef6a__cr.us:3d4c9b7c48e1a1ea@gw.dataimpulse.com:823",
-        'https': "http://d3654d34ba507d40ef6a__cr.us:3d4c9b7c48e1a1ea@gw.dataimpulse.com:823"
-    }
-
-    # Create a custom session that uses your proxy and sets browser-like headers
-    session = requests.Session()
-    session.proxies.update(proxies)
-    session.headers.update({
-        'Host': 'stats.nba.com',
-        'Connection': 'keep-alive',
-        'Cache-Control': 'max-age=0',
-        'Upgrade-Insecure-Requests': '1',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Accept-Language': 'en-US,en;q=0.9',
-    })
-    # Override the default session used by nba_api to use our custom session
-    nba_http._get_session = lambda: session
-
     x = 1
     while x < 2:
         print(x)
@@ -36,8 +15,18 @@ def run():
         # Get yesterday's date in NBA API format (MM/DD/YYYY)
         yesterday = (datetime.now() - timedelta(days=x)).strftime('%m/%d/%Y')
 
-        # Query scoreboard for yesterday's games
-        board = ScoreboardV2(game_date=yesterday, timeout=120)
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                # Query scoreboard for yesterday's games
+                board = ScoreboardV2(game_date=yesterday, timeout=60)
+                break  # Break out of the loop if successful
+            except Exception as e:
+                print(f"Attempt {attempt+1} failed: {e}")
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** (attempt + 1))  # Exponential backoff
+                else:
+                    raise  # Reraise the exception if all retries fail
 
         # Get game data
         games = board.get_dict()['resultSets'][0]['rowSet']
