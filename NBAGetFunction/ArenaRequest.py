@@ -8,6 +8,18 @@ import time
 
 
 def run():
+    # Function to check the public IP using the custom session
+    def check_proxy_ip():
+        try:
+            response = session.get("https://api.ipify.org?format=json", timeout=10)
+            print("Public IP as seen by proxy:", response.json().get("ip"))
+        except Exception as e:
+            print("Error checking public IP:", e)
+
+    # Run the IP check
+    check_proxy_ip()
+
+
     x = 1
     while x < 2:
         print(x)
