@@ -37,7 +37,7 @@ def run():
         yesterday = (datetime.now() - timedelta(days=x)).strftime('%m/%d/%Y')
 
         # Query scoreboard for yesterday's games
-        board = ScoreboardV2(game_date=yesterday)
+        board = ScoreboardV2(game_date=yesterday, timeout=120)
 
         # Get game data
         games = board.get_dict()['resultSets'][0]['rowSet']
