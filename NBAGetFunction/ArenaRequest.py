@@ -3,8 +3,20 @@ from nba_api.live.nba.endpoints import boxscore
 from datetime import datetime, timedelta
 import json
 import requests
+import nba_api.stats.library.http as nba_http
+
 
 def run():
+    # Create a custom session with browser-like headers
+    session = requests.Session()
+    session.headers.update({
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+        'Referer': 'https://stats.nba.com/',
+        'Origin': 'https://stats.nba.com'
+    })
+    # Override the default session used by nba_api to use our custom session
+    nba_http._get_session = lambda: session
+    
     x = 1
     while x < 2:
         print(x)
@@ -13,7 +25,7 @@ def run():
         yesterday = (datetime.now() - timedelta(days=x)).strftime('%m/%d/%Y')
 
         # Query scoreboard for yesterday's games
-        board = ScoreboardV2(game_date=yesterday, timeout=60)
+        board = ScoreboardV2(game_date=yesterday)
 
         # Get game data
         games = board.get_dict()['resultSets'][0]['rowSet']
