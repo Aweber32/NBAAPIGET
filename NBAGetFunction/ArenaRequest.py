@@ -7,8 +7,15 @@ import nba_api.stats.library.http as nba_http
 
 
 def run():
-    # Create a custom session with browser-like headers
+    # Configure your Data Impulse proxy details
+    proxies = {
+        'http': 'http://d3654d34ba507d40ef6a__cr.us:3d4c9b7c48e1a1ea@gw.dataimpulse.com:823" https://api.ipify.org/',
+        'https': 'http://d3654d34ba507d40ef6a__cr.us:3d4c9b7c48e1a1ea@gw.dataimpulse.com:823" https://api.ipify.org/'
+    }
+
+    # Create a custom session that uses your proxy and sets browser-like headers
     session = requests.Session()
+    session.proxies.update(proxies)
     session.headers.update({
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
         'Referer': 'https://stats.nba.com/',
@@ -16,7 +23,7 @@ def run():
     })
     # Override the default session used by nba_api to use our custom session
     nba_http._get_session = lambda: session
-    
+
     x = 1
     while x < 2:
         print(x)
