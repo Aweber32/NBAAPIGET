@@ -9,8 +9,8 @@ import nba_api.stats.library.http as nba_http
 def run():
     # Configure your Data Impulse proxy details
     proxies = {
-        'http': 'http://d3654d34ba507d40ef6a__cr.us:3d4c9b7c48e1a1ea@gw.dataimpulse.com:823" https://api.ipify.org/',
-        'https': 'http://d3654d34ba507d40ef6a__cr.us:3d4c9b7c48e1a1ea@gw.dataimpulse.com:823" https://api.ipify.org/'
+        'http': 'http://d3654d34ba507d40ef6a__cr.us:3d4c9b7c48e1a1ea@gw.dataimpulse.com:823",
+        'https': 'http://d3654d34ba507d40ef6a__cr.us:3d4c9b7c48e1a1ea@gw.dataimpulse.com:823"
     }
 
     # Create a custom session that uses your proxy and sets browser-like headers
