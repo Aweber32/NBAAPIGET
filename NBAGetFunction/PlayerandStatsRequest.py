@@ -6,6 +6,7 @@ import requests
 import uuid
 import re
 import unicodedata
+import time
 
 def run():
 
@@ -34,6 +35,7 @@ def run():
 
         # Query scoreboard for yesterday's games
         board = ScoreboardV2(game_date=yesterday)
+        time.sleep(2)
 
         # Get game data
         games = board.get_dict()['resultSets'][0]['rowSet']
@@ -62,6 +64,7 @@ def run():
             gameId = game[2]
 
             box = boxscore.BoxScore(gameId)
+            time.sleep(2)
             pretty_json = json.dumps(box.game.get_dict(), indent=4)
 
             #print(pretty_json)

@@ -16,7 +16,8 @@ def run():
         yesterday = (datetime.now() - timedelta(days=x)).strftime('%m/%d/%Y')
 
        
-        board = ScoreboardV2(game_date=yesterday, timeout=60)
+        board = ScoreboardV2(game_date=yesterday)
+        time.sleep(2)
                 
         # Get game data
         games = board.get_dict()['resultSets'][0]['rowSet']
@@ -31,6 +32,7 @@ def run():
             gameId = game[2]
 
             box = boxscore.BoxScore(gameId)
+            time.sleep(2)
             pretty_json = json.dumps(box.game.get_dict(), indent=4)
 
             #print(pretty_json)
