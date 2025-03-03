@@ -15,19 +15,9 @@ def run():
         # Get yesterday's date in NBA API format (MM/DD/YYYY)
         yesterday = (datetime.now() - timedelta(days=x)).strftime('%m/%d/%Y')
 
-        max_retries = 3
-        for attempt in range(max_retries):
-            try:
-                # Query scoreboard for yesterday's games
-                board = ScoreboardV2(game_date=yesterday, timeout=60)
-                break  # Break out of the loop if successful
-            except Exception as e:
-                print(f"Attempt {attempt+1} failed: {e}")
-                if attempt < max_retries - 1:
-                    time.sleep(2 ** (attempt + 1))  # Exponential backoff
-                else:
-                    raise  # Reraise the exception if all retries fail
-
+       
+        board = ScoreboardV2(game_date=yesterday, timeout=60)
+                
         # Get game data
         games = board.get_dict()['resultSets'][0]['rowSet']
 

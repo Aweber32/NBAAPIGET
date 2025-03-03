@@ -1,5 +1,28 @@
 import logging
 import azure.functions as func
+import requests
+import time
+import functools
+
+# Define the retry decorator and patch requests.get
+def retry(max_retries=3, delay=2):
+    """Retry decorator for transient errors."""
+    def decorator_retry(func):
+        @functools.wraps(func)
+        def wrapper_retry(*args, **kwargs):
+            for attempt in range(1, max_retries + 1):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    logging.error(f"Attempt {attempt} failed: {e}")
+                    if attempt == max_retries:
+                        raise
+                    time.sleep(delay)
+        return wrapper_retry
+    return decorator_retry
+
+requests.get = retry(max_retries=3, delay=2)(requests.get)
+
 from .ArenaRequest import run as script1_run
 from .BettingLinesRequest import run as script2_run
 from .GameRequest import run as script3_run
@@ -7,6 +30,9 @@ from .OfficialsRequest import run as script4_run
 from .PeriodRequest import run as script5_run
 from .PlayerandStatsRequest import run as script6_run
 from .TeamRequest import run as script7_run
+
+# Call the API to wake it up
+requests.get('https://nba-bet-api-gpafdhhmg9bxgbce.centralus-01.azurewebsites.net/api/arenas/')
 
 def main(myTimer: func.TimerRequest) -> None:
     logging.info("Azure Function started.")
