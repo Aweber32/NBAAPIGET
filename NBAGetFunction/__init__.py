@@ -3,6 +3,7 @@ import azure.functions as func
 import requests
 import time
 import functools
+import time
 
 # Define the retry decorator and patch requests.get
 def retry(max_retries=3, delay=2):
@@ -32,10 +33,21 @@ from .PlayerandStatsRequest import run as script6_run
 from .TeamRequest import run as script7_run
 
 #wake up the API
-try:
-    response = requests.get('https://nba-bet-api-gpafdhhmg9bxgbce.centralus-01.azurewebsites.net')
-except requests.exceptions.RequestException as e:
-    print("Initial API call failed, but continuing execution:", e)
+url = 'https://nba-bet-api-gpafdhhmg9bxgbce.centralus-01.azurewebsites.net/api/arenas/'
+max_attempts = 5
+
+for attempt in range(1, max_attempts + 1):
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Check for HTTP errors
+        print("API call successful!")
+        break  # Exit the loop if successful
+    except requests.exceptions.RequestException as e:
+        print(f"API call attempt {attempt} failed: {e}")
+        if attempt < max_attempts:
+            time.sleep(5)  # Wait 5 seconds before the next try
+        else:
+            print("Exceeded maximum attempts. Exiting.")
 
 def main(myTimer: func.TimerRequest) -> None:
     logging.info("Azure Function started.")
