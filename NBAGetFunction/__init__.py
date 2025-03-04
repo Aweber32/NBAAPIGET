@@ -31,8 +31,11 @@ from .PeriodRequest import run as script5_run
 from .PlayerandStatsRequest import run as script6_run
 from .TeamRequest import run as script7_run
 
-# Call the API to wake it up
-requests.get('https://nba-bet-api-gpafdhhmg9bxgbce.centralus-01.azurewebsites.net/api/arenas/')
+#wake up the API
+try:
+    response = requests.get('https://nba-bet-api-gpafdhhmg9bxgbce.centralus-01.azurewebsites.net')
+except requests.exceptions.RequestException as e:
+    print("Initial API call failed, but continuing execution:", e)
 
 def main(myTimer: func.TimerRequest) -> None:
     logging.info("Azure Function started.")
