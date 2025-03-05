@@ -135,5 +135,5 @@ def run():
                     response = requests.post(url, json=payload, headers=headers)
                     print(f"Response Status: {response.status_code}")
                     #print("Response JSON:", response.json())
-    return f"Period data processed successfully for {yesterday} data."
+    return f"Period data processed successfully for {yesterday} data. with api code {response.status_code}"
                     
