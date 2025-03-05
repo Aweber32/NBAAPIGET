@@ -21,10 +21,25 @@ def run():
                 
         # Get game data
         games = board.get_dict()['resultSets'][0]['rowSet']
+        
+        url = "https://nba-bet-api-gpafdhhmg9bxgbce.centralus-01.azurewebsites.net/api/arenas/"
 
-        response = requests.get('https://nba-bet-api-gpafdhhmg9bxgbce.centralus-01.azurewebsites.net/api/arenas/').json()
+        max_attempts = 3
+        for attempt in range(1, max_attempts + 1):
+            response = requests.get(url)
+            if response.status_code == 200:
+                data = response.json()
+                print(f"Success on attempt {attempt}:")
+                print(data)
+                break
+            else:
+                print(f"Attempt {attempt} failed with status code: {response.status_code}")
+                if attempt < max_attempts:
+                    print("Waiting 10 seconds before retrying...")
+                    time.sleep(10)
+        
         #response = requests.get('http://localhost:5086/api/arenas/').json()
-        all_arena_ids = [arena["arenaId"] for arena in response if "arenaId" in arena]
+        all_arena_ids = [arena["arenaId"] for arena in data if "arenaId" in arena]
 
 
         # Loop through games
