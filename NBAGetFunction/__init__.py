@@ -48,7 +48,7 @@ for attempt in range(1, max_attempts + 1):
             time.sleep(5)  # Wait 5 seconds before the next try
         else:
             print("Exceeded maximum attempts. Exiting.")
-
+time.sleep(5)
 def main(myTimer: func.TimerRequest) -> None:
     logging.info("Azure Function started.")
 
