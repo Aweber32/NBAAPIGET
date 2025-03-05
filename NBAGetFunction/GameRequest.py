@@ -87,7 +87,7 @@ def run():
             regulation_periods = parse_int(data["regulationPeriods"]) if "regulationPeriods" in data else None  # int?
             attendance = parse_int(extract_first(find_all_fields(data, "attendance")))  # int?
             sellout = parse_bool(extract_first(find_all_fields(data, "sellout")))  # bool?
-            arena_id = parse_int(extract_first(find_all_fields(data, "arenaId")))  # int?
+            arena_id = extract_first(find_all_fields(data, "arenaId"))  # string?
             lead_changes = parse_int(extract_first(find_all_fields(data, "leadChanges")))  # int?
             times_tied = parse_int(extract_first(find_all_fields(data, "timesTied")))  # int?
 
