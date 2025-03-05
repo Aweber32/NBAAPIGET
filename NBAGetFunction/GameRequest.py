@@ -10,7 +10,6 @@ def run():
     x = 1
     while x < 2:
         print(x)
-        x = x + 1
         # Get yesterday's date in NBA API format (MM/DD/YYYY)
         yesterday = (datetime.now() - timedelta(days=x)).strftime('%m/%d/%Y')
 
@@ -20,7 +19,7 @@ def run():
         # Get game data
         games = board.get_dict()['resultSets'][0]['rowSet']
 
-
+        x = x + 1
         # Loop through games
         for game in games:
             gameId = game[2]

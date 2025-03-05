@@ -428,4 +428,4 @@ def run():
                 response = requests.post(url, json=payload, headers=headers)
                 print(f"Response Status: {response.status_code}")
                 #print("Response JSON:", response.json())
-    return f"Team data processed successfully for {gameId} data."
+    return f"Team data processed successfully for {yesterday} data."
