@@ -4,6 +4,7 @@ import requests
 import time
 import functools
 import time
+import os
 
 # Define the retry decorator and patch requests.get
 def retry(max_retries=3, delay=2):
@@ -66,7 +67,7 @@ def main(myTimer: func.TimerRequest) -> None:
     # Get the base URL from an environment variable or hard-code it.
     base_url = "https://nbaxgbfunction.azurewebsites.net"
     # Retrieve the function key for FunctionB (if it uses function-level auth)
-    function_key = "JO9qL8UEYnZ5DN96QZ04JJ0CPqEc-0OQQIIli7VjhusCAzFuOD0jTw=="
+    function_key = os.environ["NBA_XGB_Function_Connection_Key"]
 
     # Construct the URL for FunctionB (assuming its route is set to "api/second_function")
     second_function_url = f"{base_url}/api/nbaxgbfunction?code={function_key}"
