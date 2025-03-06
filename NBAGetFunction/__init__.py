@@ -61,4 +61,22 @@ def main(myTimer: func.TimerRequest) -> None:
     Teams = script7_run()
 
     logging.info(f"Results: {Arenas}, {BettingLines}, {Games}, {Officials}, {Periods}, {PlayerandStats}, {Teams}")
+
+    # After completing its work, call the second function.
+    # Get the base URL from an environment variable or hard-code it.
+    base_url = "https://nbaxgbfunction.azurewebsites.net"
+    # Retrieve the function key for FunctionB (if it uses function-level auth)
+    function_key = "JO9qL8UEYnZ5DN96QZ04JJ0CPqEc-0OQQIIli7VjhusCAzFuOD0jTw=="
+
+    # Construct the URL for FunctionB (assuming its route is set to "api/second_function")
+    second_function_url = f"{base_url}/api/nbaxgbfunction?code={function_key}"
+    logging.info(f"Calling FunctionB at: {second_function_url}")
+    
+    try:
+        response = requests.get(second_function_url)
+        response.raise_for_status()
+        logging.info(f"FunctionB responded with: {response.text}")
+    except Exception as e:
+        logging.error(f"Error calling FunctionB: {e}")
+
     logging.info("Azure Function execution finished.")
